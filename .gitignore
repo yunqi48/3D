@@ -1,0 +1,12 @@
+# Godot 4+ specific ignores
+.godot/
+/android/
+
+# Godot 编辑器残留临时文件
+*.tmp
+
+# 本地个人配置（含权限白名单，不入库）
+/.claude/
+
+# 插件源码解压目录（已安装到 addons/，这里是重复源，不入库）
+/JSON-Editor-Plugin-for-Godot-4.x-master/

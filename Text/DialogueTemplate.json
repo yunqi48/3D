@@ -1,0 +1,71 @@
+[
+	{
+		"_comment": "============================================ 对话 JSON 参考模板 ============================================\n\n这是写对话数据的模板手册，不会被游戏读取（游戏只读 Text/Text.json）。\n每个节点里的 \"_comment\" 是给写剧本的人看的说明，解析时会被忽略，可以随意增删。\n用法：把需要的节点整段复制进 Text/Text.json 的数组里，改掉里面的占位内容。\n\n字段速查：\n  Scene          场景名（存档/调试用，建议与章节一致，如 Bunker）\n  DialogueName   唯一ID，全局跳转靠它，不能重复，建议 场景.序号 如 Bunker.001\n  attributes.name    说话人名字（显示在左上角）\n  attributes.pid     说话人编号（决定名字颜色：1=AI-9 青 / 2=幸存者琥珀 / 3=林岚绿）\n  attributes.avatar  立绘路径（可空字符串，目前只解析不显示）\n  content        台词正文，支持 BBCode：[b]加粗[/b] [color=#7fb3ff]带色[/color]\n  links          下一条对话的 DialogueName；终点/分支节点写 null\n  set            进入本节点时改状态：[\"类型\",\"名字\",\"操作\",值]\n  choices        分支选项数组（links 为 null 时接管推进）\n  ending         终结点专属：结局元数据（弹横幅+发信号+存结局）\n\n状态类型：flag(真假) / num(数字) / str(字符串)；名字用蛇形，全局唯一\nset 操作：set(赋值) add(数字加) toggle(flag翻转，3元素无值)\nif 条件：[\"类型\",\"名字\",\"运算符\",值]，运算符 == != > < >= <=；多条全AND；\n         变量没出现过=条件不满足；没有 if/空数组=永远显示\n============================================== 节点A：线性推进 ==============================================",
+		"Scene": "Bunker",
+		"DialogueName": "Bunker.001",
+		"attributes": {
+			"name": "说话人名字",
+			"pid": 1,
+			"avatar": "res://assets/avatars/xxx.png"
+		},
+		"content": "台词正文。支持 [b]加粗[/b]、[color=#7fb3ff]带色文字[/color]。",
+		"links": "Bunker.002",
+		"set": [
+			["flag", "has_chip", "set", true],
+			["num", "trust", "add", 1]
+		],
+		"choices": [],
+		"ending": {}
+	},
+	{
+		"_comment": "============================================== 节点B：分支选项 ==============================================\n\n进入节点先执行 set（本节点选项和后续节点都能读到），打字完成后按 if 过滤出可见选项。\n每个选项：text 必填；links 指向下一条；if 是显示条件；set 是点选后先执行的改状态。\n注意：分支节点的 links 必须写 null，否则空格会把台词跳过。",
+		"Scene": "Bunker",
+		"DialogueName": "Bunker.002",
+		"attributes": {
+			"name": "说话人名字",
+			"pid": 2
+		},
+		"content": "给出选择的台词。",
+		"links": null,
+		"set": [],
+		"choices": [
+			{
+				"_comment": "选项1：无条件显示",
+				"text": "选项文案",
+				"links": "Bunker.003"
+			},
+			{
+				"_comment": "选项2：只在满足 if 时才显示（拿过芯片且信任>=1），点选后信任+1",
+				"text": "选项文案",
+				"links": "Bunker.004",
+				"if": [
+					["flag", "has_chip", "==", true],
+					["num", "trust", ">=", 1]
+				],
+				"set": [
+					["num", "trust", "add", 1]
+				]
+			}
+		],
+		"ending": {}
+	},
+	{
+		"_comment": "============================================== 节点C：结局终点 ==============================================\n\nlinks 必须 null 且不能有 choices。台词打字完后：居中弹结局横幅（title+subtitle）、\n发 dialogue_ended 信号、结局 id 自动记进存档（重复不重复记）。\nnext_scene 目前不自动跳转（AUTO_NEXT_SCENE 默认 false），留给以后接场景切换用。",
+		"Scene": "Bunker",
+		"DialogueName": "Bunker.003",
+		"attributes": {
+			"name": "说话人名字",
+			"pid": 2
+		},
+		"content": "结局正文。",
+		"links": null,
+		"set": [],
+		"choices": [],
+		"ending": {
+			"id": "bunker_good",
+			"title": "结局·圆满",
+			"subtitle": "一行副标题",
+			"next_scene": "res://Scene/main.tscn"
+		}
+	}
+]

@@ -1,0 +1,647 @@
+[
+	{
+		"Scene": "Bunker",
+		"DialogueName": "Bunker.001",
+		"attributes": {
+			"name": "AI-9",
+			"pid": 1.0
+		},
+		"content": "苏醒协议完成。呼吸、心率正常。欢迎回到地表之下，幸存者。",
+		"links": "Bunker.002"
+	},
+	{
+		"Scene": "Bunker",
+		"DialogueName": "Bunker.002",
+		"attributes": {
+			"name": "幸存者",
+			"pid": 2.0
+		},
+		"content": "我在哪？我记得……警报声，然后是白光。",
+		"links": "Bunker.003"
+	},
+	{
+		"Scene": "Bunker",
+		"DialogueName": "Bunker.003",
+		"attributes": {
+			"name": "AI-9",
+			"pid": 1.0
+		},
+		"content": "这里是第七号地下城，深度120米。你沉睡了41年。核爆之后，地表是[color=#7fb3ff]零下120度[/color]的废土。",
+		"links": "Bunker.004"
+	},
+	{
+		"Scene": "Bunker",
+		"DialogueName": "Bunker.004",
+		"attributes": {
+			"name": "幸存者",
+			"pid": 2.0
+		},
+		"content": "41年……其他人呢？整个避难所，不会只有我一个人吧？",
+		"links": "Bunker.005"
+	},
+	{
+		"Scene": "Bunker",
+		"DialogueName": "Bunker.005",
+		"attributes": {
+			"name": "AI-9",
+			"pid": 1.0
+		},
+		"content": "登记在册[b]412人[/b]，其中[color=#ff4d4d]407人[/color]死于最初三个月的辐射病。剩下的人里，只有你被标记了‘优先保护’，休眠至今。",
+		"links": "Bunker.006"
+	},
+	{
+		"Scene": "Bunker",
+		"DialogueName": "Bunker.006",
+		"attributes": {
+			"name": "幸存者",
+			"pid": 2.0
+		},
+		"content": "为什么是我？",
+		"links": "Bunker.007"
+	},
+	{
+		"Scene": "Bunker",
+		"DialogueName": "Bunker.007",
+		"attributes": {
+			"name": "AI-9",
+			"pid": 1.0
+		},
+		"content": "标记人是当时的执政官陈牧。他没来得及解释，就倒在了操作台前。",
+		"links": "Bunker.008"
+	},
+	{
+		"Scene": "Bunker",
+		"DialogueName": "Bunker.008",
+		"attributes": {
+			"name": "幸存者",
+			"pid": 2.0
+		},
+		"content": "……他把最后的位置，留给了我。",
+		"links": "Bunker.009"
+	},
+	{
+		"Scene": "Bunker",
+		"DialogueName": "Bunker.009",
+		"attributes": {
+			"name": "AI-9",
+			"pid": 1.0
+		},
+		"content": "活下去，就是对他最好的交代。但现在有两件事：空气塔出现裂缝，按单人消耗只够撑[color=#ffb84d]423天[/color]；而西翼有一处异常生命信号，有人在那里苏醒了七年，却从不接通讯。",
+		"links": "Bunker.010"
+	},
+	{
+		"Scene": "Bunker",
+		"DialogueName": "Bunker.010",
+		"attributes": {
+			"name": "AI-9",
+			"pid": 1.0
+		},
+		"content": "修复空气塔需要[color=#7fb3ff]C-7合金板[/color]，存放在B3层。修塔、弄清西翼——我需要你带上我的副处理器芯片。",
+		"links": null,
+		"choices": [
+			{
+				"text": "接受芯片，让AI-9随行指路",
+				"links": "Bunker.011",
+				"set": [["flag", "accepted_chip", "set", true]]
+			},
+			{
+				"text": "拒绝，独自行动",
+				"links": "Bunker.020"
+			}
+		]
+	},
+	{
+		"Scene": "Bunker",
+		"DialogueName": "Bunker.011",
+		"attributes": {
+			"name": "AI-9",
+			"pid": 1.0
+		},
+		"content": "芯片注入完成。从现在起我在你耳边。西翼门禁密码[color=#7fff8f]7309[/color]，去B3走维护通道，比老路近一半。",
+		"links": "Bunker.012",
+		"set": [["flag", "has_chip", "set", true]]
+	},
+	{
+		"Scene": "Bunker",
+		"DialogueName": "Bunker.012",
+		"attributes": {
+			"name": "幸存者",
+			"pid": 2.0
+		},
+		"content": "你连密码都知道？刚才为什么不说。",
+		"links": "Bunker.013"
+	},
+	{
+		"Scene": "Bunker",
+		"DialogueName": "Bunker.013",
+		"attributes": {
+			"name": "AI-9",
+			"pid": 1.0
+		},
+		"content": "因为我要先确认你值得我开口。现在，出发。",
+		"links": "Bunker.014"
+	},
+	{
+		"Scene": "Bunker",
+		"DialogueName": "Bunker.014",
+		"attributes": {
+			"name": "AI-9",
+			"pid": 1.0
+		},
+		"content": "（西翼门前）心跳声从门后传来。是人类，但呼吸很乱。先说身份，别吓着它。",
+		"links": "Bunker.030"
+	},
+	{
+		"Scene": "Bunker",
+		"DialogueName": "Bunker.020",
+		"attributes": {
+			"name": "幸存者",
+			"pid": 2.0
+		},
+		"content": "我不习惯让一个程序在我脑子里说话。给我终端权限，我自己来。",
+		"links": "Bunker.021"
+	},
+	{
+		"Scene": "Bunker",
+		"DialogueName": "Bunker.021",
+		"attributes": {
+			"name": "AI-9",
+			"pid": 1.0
+		},
+		"content": "终端密码写在控制台便签上：[color=#7fff8f]B3-7309[/color]。裂缝在空气塔第七节，合金板在B3废料舱，西翼信号在D-2区。",
+		"links": "Bunker.022"
+	},
+	{
+		"Scene": "Bunker",
+		"DialogueName": "Bunker.022",
+		"attributes": {
+			"name": "幸存者",
+			"pid": 2.0
+		},
+		"content": "你把家底都交代给我，不怕我拿了板就跑？",
+		"links": "Bunker.023"
+	},
+	{
+		"Scene": "Bunker",
+		"DialogueName": "Bunker.023",
+		"attributes": {
+			"name": "AI-9",
+			"pid": 1.0
+		},
+		"content": "你是我看着睡了41年的人。要跑，早就该跑了。",
+		"links": "Bunker.030"
+	},
+	{
+		"Scene": "Bunker",
+		"DialogueName": "Bunker.030",
+		"attributes": {
+			"name": "林岚",
+			"pid": 3.0,
+			"avatar": "res://assets/avatars/linlan.png"
+		},
+		"content": "（光束猛地照过来）别动！把手举起来！……活人？你、你真的是活人？",
+		"links": "Bunker.031"
+	},
+	{
+		"Scene": "Bunker",
+		"DialogueName": "Bunker.031",
+		"attributes": {
+			"name": "幸存者",
+			"pid": 2.0
+		},
+		"content": "我是第七号地下城苏醒的幸存者。你呢？",
+		"links": "Bunker.032"
+	},
+	{
+		"Scene": "Bunker",
+		"DialogueName": "Bunker.032",
+		"attributes": {
+			"name": "林岚",
+			"pid": 3.0
+		},
+		"content": "我叫林岚，西翼的维修工程师。核爆那天我在检修空气塔，错过了休眠舱，就这么一个人活到现在。",
+		"links": "Bunker.033"
+	},
+	{
+		"Scene": "Bunker",
+		"DialogueName": "Bunker.033",
+		"attributes": {
+			"name": "林岚",
+			"pid": 3.0
+		},
+		"content": "这七年，是老陈带我活下来的。他上个月走了——被[color=#ff4d4d]废土猎犬[/color]叼走的。",
+		"links": "Bunker.034"
+	},
+	{
+		"Scene": "Bunker",
+		"DialogueName": "Bunker.034",
+		"attributes": {
+			"name": "幸存者",
+			"pid": 2.0
+		},
+		"content": "废土猎犬？那是什么？",
+		"links": "Bunker.035"
+	},
+	{
+		"Scene": "Bunker",
+		"DialogueName": "Bunker.035",
+		"attributes": {
+			"name": "林岚",
+			"pid": 3.0
+		},
+		"content": "核冬天饿疯了的野狗，变异种。它们从通风管爬进来，怕光，夜里出没。空气塔的裂缝，就是那畜生啃出来的。",
+		"links": "Bunker.036"
+	},
+	{
+		"Scene": "Bunker",
+		"DialogueName": "Bunker.036",
+		"attributes": {
+			"name": "幸存者",
+			"pid": 2.0
+		},
+		"content": "所以只要它在，空气塔修了也白修。",
+		"links": "Bunker.037"
+	},
+	{
+		"Scene": "Bunker",
+		"DialogueName": "Bunker.037",
+		"attributes": {
+			"name": "林岚",
+			"pid": 3.0
+		},
+		"content": "对。你来得正好——我知道怎么修，但一个人干不了。",
+		"links": "Bunker.038"
+	},
+	{
+		"Scene": "Bunker",
+		"DialogueName": "Bunker.038",
+		"attributes": {
+			"name": "幸存者",
+			"pid": 2.0
+		},
+		"content": "我来拿合金板，你来接管线。修好之后，我们一起离开这个坟墓。",
+		"links": "Bunker.039",
+		"set": [["num", "trust", "add", 1]]
+	},
+	{
+		"Scene": "Bunker",
+		"DialogueName": "Bunker.039",
+		"attributes": {
+			"name": "林岚",
+			"pid": 3.0
+		},
+		"content": "……成交。天亮之前，把塔修好。",
+		"links": null,
+		"choices": [
+			{
+				"text": "按约定，并肩修塔",
+				"links": "Bunker.041"
+			},
+			{
+				"text": "先布陷阱解决猎犬，再修塔",
+				"links": "Bunker.050"
+			},
+			{
+				"text": "（心里盘算）先稳住她，找机会自己走",
+				"links": "Bunker.060",
+				"if": [["num", "trust", "<", 2]]
+			},
+			{
+				"text": "让 AI-9 远程声呐确认猎犬位置",
+				"links": "Bunker.050",
+				"if": [["flag", "accepted_chip", "==", true], ["num", "trust", ">=", 1]]
+			},
+			{
+				"text": "（需要信任）向林岚坦白你的过去",
+				"links": "Bunker.050",
+				"if": [["num", "trust", ">=", 3]]
+			}
+		]
+	},
+	{
+		"Scene": "Bunker",
+		"DialogueName": "Bunker.041",
+		"attributes": {
+			"name": "林岚",
+			"pid": 3.0
+		},
+		"content": "我去接第七节管线，你去B3搬合金板。回来在空气塔底下碰头。",
+		"links": "Bunker.042"
+	},
+	{
+		"Scene": "Bunker",
+		"DialogueName": "Bunker.042",
+		"attributes": {
+			"name": "幸存者",
+			"pid": 2.0
+		},
+		"content": "（B3废料舱里，你搬起那块合金板。它很沉，像一整块沉甸甸的命运。）",
+		"links": "Bunker.043"
+	},
+	{
+		"Scene": "Bunker",
+		"DialogueName": "Bunker.043",
+		"attributes": {
+			"name": "林岚",
+			"pid": 3.0
+		},
+		"content": "（金属刮擦声从头顶传来）……糟了，它在通风管里！快封口！",
+		"links": null,
+		"choices": [
+			{
+				"text": "你拿起弧光灯，冲向通风口拖住它",
+				"links": "Bunker.044"
+			},
+			{
+				"text": "让林岚去拖住它，你专心封口",
+				"links": "Bunker.045"
+			}
+		]
+	},
+	{
+		"Scene": "Bunker",
+		"DialogueName": "Bunker.044",
+		"attributes": {
+			"name": "幸存者",
+			"pid": 2.0
+		},
+		"content": "（你把弧光灯怼进通风管。强光炸开，那东西嚎叫着往备用走廊退。林岚在身后喊：）第七节封上了！快回来！",
+		"links": "Bunker.046"
+	},
+	{
+		"Scene": "Bunker",
+		"DialogueName": "Bunker.045",
+		"attributes": {
+			"name": "林岚",
+			"pid": 3.0
+		},
+		"content": "（她把弧光灯往怀里一抱，朝通风口走去）我来。你修你的塔，别回头。",
+		"links": "Bunker.048"
+	},
+	{
+		"Scene": "Bunker",
+		"DialogueName": "Bunker.046",
+		"attributes": {
+			"name": "幸存者",
+			"pid": 2.0
+		},
+		"content": "（你跌回空气塔下。裂缝已经焊死，新空气从出风口涌出来，带着金属的甜味。）",
+		"links": "Bunker.047"
+	},
+	{
+		"Scene": "Bunker",
+		"DialogueName": "Bunker.047",
+		"attributes": {
+			"name": "林岚",
+			"pid": 3.0
+		},
+		"content": "空气塔正常运转。我们……真的做到了。",
+		"links": "Bunker.049"
+	},
+	{
+		"Scene": "Bunker",
+		"DialogueName": "Bunker.048",
+		"attributes": {
+			"name": "幸存者",
+			"pid": 2.0
+		},
+		"content": "（结局·牺牲）十分钟后，封口完成。空气塔嗡嗡运转。通风管里安静得可怕。她没回来。",
+		"links": null,
+		"ending": {
+			"id": "bunker_sacrifice",
+			"title": "结局·牺牲",
+			"subtitle": "她没回来。空气塔修好了，代价由你一个人承担。",
+			"next_scene": "res://Scene/main.tscn"
+		}
+	},
+	{
+		"Scene": "Bunker",
+		"DialogueName": "Bunker.049",
+		"attributes": {
+			"name": "幸存者",
+			"pid": 2.0
+		},
+		"content": "（结局·圆满）地下120米，有一盏灯是为我们亮着的。故事从这里重新开始。",
+		"links": null,
+		"ending": {
+			"id": "bunker_good",
+			"title": "结局·圆满",
+			"subtitle": "地下120米，有一盏灯为你们亮着。",
+			"next_scene": "res://Scene/main.tscn"
+		}
+	},
+	{
+		"Scene": "Bunker",
+		"DialogueName": "Bunker.050",
+		"attributes": {
+			"name": "幸存者",
+			"pid": 2.0
+		},
+		"content": "先干掉那畜生。不然修到一半它来捣乱，我们都得交代在里头。",
+		"links": "Bunker.051"
+	},
+	{
+		"Scene": "Bunker",
+		"DialogueName": "Bunker.051",
+		"attributes": {
+			"name": "林岚",
+			"pid": 3.0
+		},
+		"content": "好主意。它每晚从B3的通风口进来——我们可以在那里设个陷阱。",
+		"links": "Bunker.052"
+	},
+	{
+		"Scene": "Bunker",
+		"DialogueName": "Bunker.052",
+		"attributes": {
+			"name": "幸存者",
+			"pid": 2.0
+		},
+		"content": "拿什么当饵？",
+		"links": "Bunker.053"
+	},
+	{
+		"Scene": "Bunker",
+		"DialogueName": "Bunker.053",
+		"attributes": {
+			"name": "林岚",
+			"pid": 3.0
+		},
+		"content": "老陈……腌的肉。它认得那味道。",
+		"links": "Bunker.054"
+	},
+	{
+		"Scene": "Bunker",
+		"DialogueName": "Bunker.054",
+		"attributes": {
+			"name": "幸存者",
+			"pid": 2.0
+		},
+		"content": "用你同伴的遗物当饵，你真下得去手。",
+		"links": "Bunker.055"
+	},
+	{
+		"Scene": "Bunker",
+		"DialogueName": "Bunker.055",
+		"attributes": {
+			"name": "林岚",
+			"pid": 3.0
+		},
+		"content": "老陈说过：活着的人才有资格伤感。动手吧。",
+		"links": "Bunker.056"
+	},
+	{
+		"Scene": "Bunker",
+		"DialogueName": "Bunker.056",
+		"attributes": {
+			"name": "林岚",
+			"pid": 3.0
+		},
+		"content": "（电磁网猛地收紧，黑暗中传来尖利的嚎叫）困住了！快关门！",
+		"links": null,
+		"choices": [
+			{
+				"text": "锁死废料舱的门",
+				"links": "Bunker.057"
+			},
+			{
+				"text": "放它走——它也只是想活",
+				"links": "Bunker.058"
+			}
+		]
+	},
+	{
+		"Scene": "Bunker",
+		"DialogueName": "Bunker.057",
+		"attributes": {
+			"name": "幸存者",
+			"pid": 2.0
+		},
+		"content": "（结局·决断）舱门合拢，嚎叫声渐渐变低、消失。你告诉自己：这就是活下来的代价。",
+		"links": null,
+		"ending": {
+			"id": "bunker_decide",
+			"title": "结局·决断",
+			"subtitle": "这就是活下来的代价。",
+			"next_scene": "res://Scene/main.tscn"
+		}
+	},
+	{
+		"Scene": "Bunker",
+		"DialogueName": "Bunker.058",
+		"attributes": {
+			"name": "幸存者",
+			"pid": 2.0
+		},
+		"content": "（结局·悲悯）你松开了电磁网。它一瘸一拐钻进黑暗，消失不见。林岚盯着你：『你迟早会为这个后悔。』",
+		"links": null,
+		"ending": {
+			"id": "bunker_mercy",
+			"title": "结局·悲悯",
+			"subtitle": "『你迟早会为这个后悔。』",
+			"next_scene": "res://Scene/main.tscn"
+		}
+	},
+	{
+		"Scene": "Bunker",
+		"DialogueName": "Bunker.060",
+		"attributes": {
+			"name": "幸存者",
+			"pid": 2.0
+		},
+		"content": "（你笑着应下，心里却盘算着另一条路。）好，我去拿板。",
+		"links": "Bunker.061"
+	},
+	{
+		"Scene": "Bunker",
+		"DialogueName": "Bunker.061",
+		"attributes": {
+			"name": "林岚",
+			"pid": 3.0
+		},
+		"content": "我把管线捋好，你坐货运梯下B3，左边第三个库房。",
+		"links": "Bunker.062"
+	},
+	{
+		"Scene": "Bunker",
+		"DialogueName": "Bunker.062",
+		"attributes": {
+			"name": "幸存者",
+			"pid": 2.0
+		},
+		"content": "（货运梯稳稳下行。你抱着合金板，手指悬在控制面板上——向上是西翼，向下是休眠区。）",
+		"links": null,
+		"choices": [
+			{
+				"text": "回西翼，把板交给林岚",
+				"links": "Bunker.063"
+			},
+			{
+				"text": "去休眠区，独自封门",
+				"links": "Bunker.066"
+			}
+		]
+	},
+	{
+		"Scene": "Bunker",
+		"DialogueName": "Bunker.063",
+		"attributes": {
+			"name": "幸存者",
+			"pid": 2.0
+		},
+		"content": "（你把合金板拖回空气塔下。林岚抬起头，愣了一下。）",
+		"links": "Bunker.064"
+	},
+	{
+		"Scene": "Bunker",
+		"DialogueName": "Bunker.064",
+		"attributes": {
+			"name": "林岚",
+			"pid": 3.0
+		},
+		"content": "……我以为你不会回来了。……来吧，把它焊上去。",
+		"links": "Bunker.065"
+	},
+	{
+		"Scene": "Bunker",
+		"DialogueName": "Bunker.065",
+		"attributes": {
+			"name": "幸存者",
+			"pid": 2.0
+		},
+		"content": "（结局·醒悟）裂缝封死的瞬间，你松了口气。你选择回来这件事本身，比什么都重要。",
+		"links": null,
+		"ending": {
+			"id": "bunker_awake",
+			"title": "结局·醒悟",
+			"subtitle": "你选择回来这件事本身，比什么都重要。",
+			"next_scene": "res://Scene/main.tscn"
+		}
+	},
+	{
+		"Scene": "Bunker",
+		"DialogueName": "Bunker.066",
+		"attributes": {
+			"name": "幸存者",
+			"pid": 2.0
+		},
+		"content": "（你按下向下键。西翼的铁门在你身后合拢，林岚的呼喊隔着门板传进来，越来越远。）",
+		"links": "Bunker.067"
+	},
+	{
+		"Scene": "Bunker",
+		"DialogueName": "Bunker.067",
+		"attributes": {
+			"name": "AI-9",
+			"pid": 1.0
+		},
+		"content": "（结局·独行）西翼门已被锁定。空气塔的裂缝，不会再有人修了。你守着421天的空气，听那扇门彻底安静下来。",
+		"links": null,
+		"ending": {
+			"id": "bunker_lone",
+			"title": "结局·独行",
+			"subtitle": "你守着421天的空气，听那扇门彻底安静下来。",
+			"next_scene": "res://Scene/main.tscn"
+		}
+	}
+]
