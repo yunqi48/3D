@@ -1,0 +1,20 @@
+[gd_scene format=3 uid="uid://c7txue4f0wwh1"]
+
+[ext_resource type="Script" uid="uid://bejwwjdfwu6rf" path="res://Shader/5 Variables/sprite4.gd" id="1_83fnm"]
+[ext_resource type="Shader" uid="uid://cl3wcdpxhyme1" path="res://Shader/5 Variables/sprite4.tres" id="1_vjvqu"]
+[ext_resource type="Texture2D" uid="uid://dsfih0gp7rr7n" path="res://icon.svg" id="2_83fnm"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_iitrw"]
+shader = ExtResource("1_vjvqu")
+shader_parameter/move_x = 0.0
+shader_parameter/Alpha = 0.5
+
+[node name="Node2D" type="Node2D" unique_id=1649916074]
+script = ExtResource("1_83fnm")
+
+[node name="Icon" type="Sprite2D" parent="." unique_id=921287836]
+material = SubResource("ShaderMaterial_iitrw")
+position = Vector2(74, 75)
+texture = ExtResource("2_83fnm")
+
+[node name="Camera2D" type="Camera2D" parent="Icon" unique_id=1605372089]

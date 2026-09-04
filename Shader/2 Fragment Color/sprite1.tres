@@ -1,0 +1,31 @@
+[gd_resource type="VisualShader" format=3 uid="uid://iynv31ufah1w"]
+
+[sub_resource type="VisualShaderNodeClamp" id="VisualShaderNodeClamp_ve8gp"]
+
+[sub_resource type="VisualShaderNodeInput" id="VisualShaderNodeInput_hkfgf"]
+input_name = "time"
+
+[sub_resource type="VisualShaderNodeVectorCompose" id="VisualShaderNodeVectorCompose_t24as"]
+
+[sub_resource type="VisualShaderNodeInput" id="VisualShaderNodeInput_ve8gp"]
+expanded_output_ports = [0]
+input_name = "color"
+
+[sub_resource type="VisualShaderNodeFloatOp" id="VisualShaderNodeFloatOp_2n5ht"]
+operator = 2
+
+[resource]
+mode = 1
+flags/light_only = false
+nodes/fragment/0/position = Vector2(640, 120)
+nodes/fragment/3/node = SubResource("VisualShaderNodeClamp_ve8gp")
+nodes/fragment/3/position = Vector2(-240, 360)
+nodes/fragment/4/node = SubResource("VisualShaderNodeInput_hkfgf")
+nodes/fragment/4/position = Vector2(-660, 380)
+nodes/fragment/6/node = SubResource("VisualShaderNodeVectorCompose_t24as")
+nodes/fragment/6/position = Vector2(340, 120)
+nodes/fragment/8/node = SubResource("VisualShaderNodeInput_ve8gp")
+nodes/fragment/8/position = Vector2(-660, 100)
+nodes/fragment/9/node = SubResource("VisualShaderNodeFloatOp_2n5ht")
+nodes/fragment/9/position = Vector2(0, 260)
+nodes/fragment/connections = PackedInt32Array(8, 1, 6, 0, 8, 2, 6, 1, 6, 0, 0, 0, 4, 0, 3, 0, 9, 0, 6, 2, 3, 0, 9, 1, 8, 3, 9, 0)

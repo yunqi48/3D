@@ -1,0 +1,13 @@
+[gd_scene format=3 uid="uid://bppkljc0j2vqy"]
+
+[ext_resource type="Shader" uid="uid://dm3keksjpqq48" path="res://Shader/3 Textures/sprite2.tres" id="1_ijtvs"]
+[ext_resource type="Texture2D" uid="uid://dsfih0gp7rr7n" path="res://icon.svg" id="2_8d4s1"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_iitrw"]
+shader = ExtResource("1_ijtvs")
+
+[node name="Node2D" type="Node2D" unique_id=1693870369]
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1536805070]
+material = SubResource("ShaderMaterial_iitrw")
+texture = ExtResource("2_8d4s1")

@@ -1,0 +1,16 @@
+[gd_scene format=3 uid="uid://bjd6fc4rja35v"]
+
+[ext_resource type="Shader" uid="uid://iynv31ufah1w" path="res://Shader/2 Fragment Color/sprite1.tres" id="1_r77a5"]
+[ext_resource type="Texture2D" uid="uid://dsfih0gp7rr7n" path="res://icon.svg" id="2_j55qu"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_epypp"]
+shader = ExtResource("1_r77a5")
+
+[node name="Node2D" type="Node2D" unique_id=1792465309]
+
+[node name="Icon" type="Sprite2D" parent="." unique_id=1974210002]
+material = SubResource("ShaderMaterial_epypp")
+position = Vector2(65, 63)
+texture = ExtResource("2_j55qu")
+
+[node name="Camera2D" type="Camera2D" parent="Icon" unique_id=1491665531]
