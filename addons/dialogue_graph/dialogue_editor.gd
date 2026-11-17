@@ -8,12 +8,17 @@ var graph: DialogueGraph
 var dirty := false
 var current_path := TEXT_PATH
 
+var _open_dialog: FileDialog
+var _save_dialog: FileDialog
+var _close_dialog: ConfirmationDialog
+
 @onready var graph_edit: GraphEdit = %GraphEdit
 @onready var inspector: VBoxContainer = %Inspector
 @onready var error_list: ItemList = %ErrorList
 @onready var status: Label = %Status
 
 func _ready() -> void:
+	get_tree().auto_accept_quit = false
 	graph_edit.minimap_enabled = MINIMAP
 	graph_edit.connection_request.connect(_on_connection_request)
 	graph_edit.disconnection_request.connect(_on_disconnection_request)
@@ -21,10 +26,44 @@ func _ready() -> void:
 	graph_edit.end_node_move.connect(_on_end_node_move)
 	graph_edit.node_selected.connect(_on_node_selected)
 	graph_edit.popup_request.connect(_on_popup_request)
+	error_list.item_selected.connect(_on_error_selected)
+
+	%OpenButton.pressed.connect(_on_open)
+	%SaveButton.pressed.connect(_on_save)
+	%SaveAsButton.pressed.connect(_on_save_as)
+	%ValidateButton.pressed.connect(_on_validate)
+	%AutoLayoutButton.pressed.connect(_on_auto_layout)
+	%SearchEdit.text_submitted.connect(_on_search_submitted)
+
+	_setup_dialogs()
 	load_file(current_path)
 
+func _setup_dialogs() -> void:
+	_open_dialog = FileDialog.new()
+	_open_dialog.file_mode = FileDialog.FILE_MODE_OPEN_FILE
+	_open_dialog.access = FileDialog.ACCESS_RESOURCES
+	_open_dialog.filters = PackedStringArray(["*.json ; JSON"])
+	_open_dialog.current_dir = "res://Text"
+	_open_dialog.file_selected.connect(func(path: String) -> void: load_file(path))
+	add_child(_open_dialog)
+
+	_save_dialog = FileDialog.new()
+	_save_dialog.file_mode = FileDialog.FILE_MODE_SAVE_FILE
+	_save_dialog.access = FileDialog.ACCESS_RESOURCES
+	_save_dialog.filters = PackedStringArray(["*.json ; JSON"])
+	_save_dialog.current_dir = "res://Text"
+	_save_dialog.current_file = "Text.json"
+	_save_dialog.file_selected.connect(_write_to)
+	add_child(_save_dialog)
+
+	_close_dialog = ConfirmationDialog.new()
+	_close_dialog.title = "未保存的修改"
+	_close_dialog.dialog_text = "有未保存的修改，确定要关闭编辑器吗？"
+	_close_dialog.confirmed.connect(func() -> void: get_tree().quit())
+	add_child(_close_dialog)
+
 func load_file(path: String) -> void:
-	var data = JsonHelper.read_json_file(path)
+	var data = DialogueJson.read_file(path)
 	if not (data is Array):
 		status.text = "读取失败: " + path
 		return
@@ -302,3 +341,80 @@ func _on_end_node_move() -> void:
 		if c is DialogueGraphNode:
 			graph.set_position(c.node_index, c.position_offset)
 	_mark_dirty()
+
+func _on_open() -> void:
+	_open_dialog.current_dir = current_path.get_base_dir()
+	_open_dialog.current_file = current_path.get_file()
+	_open_dialog.popup_centered(Vector2i(900, 600))
+
+func _on_save() -> void:
+	_write_to(current_path)
+
+func _on_save_as() -> void:
+	_save_dialog.current_dir = current_path.get_base_dir()
+	_save_dialog.current_file = current_path.get_file()
+	_save_dialog.popup_centered(Vector2i(900, 600))
+
+func _write_to(path: String) -> bool:
+	if graph == null:
+		status.text = "没有可保存的图"
+		return false
+	if not DialogueJson.save(path, graph.to_array()):
+		status.text = "保存失败: " + path
+		return false
+	current_path = path
+	dirty = false
+	_refresh_status()
+	status.text = "已保存: " + path
+	return true
+
+func _on_validate() -> void:
+	error_list.clear()
+	var issues := DialogueValidator.validate(graph)
+	for it in issues:
+		var prefix := "错误" if str(it.get("level", "warning")) == "error" else "警告"
+		var idx := error_list.add_item("%s | %s: %s" % [
+			prefix, graph.get_name_at(int(it.get("node_index", -1))), str(it.get("message", ""))])
+		error_list.set_item_metadata(idx, int(it.get("node_index", -1)))
+	status.text = "校验完成：%d 个问题" % issues.size()
+
+func _on_error_selected(item: int) -> void:
+	var node_index: int = int(error_list.get_item_metadata(item))
+	if _focus_node(node_index):
+		status.text = "定位: " + graph.get_name_at(node_index)
+
+func _on_search_submitted(text: String) -> void:
+	var key := text.strip_edges()
+	if key.is_empty():
+		return
+	var idx := graph.index_of(key)
+	if idx < 0:
+		status.text = "找不到 DialogueName: " + key
+		return
+	_focus_node(idx)
+	status.text = "定位: " + key
+
+func _focus_node(node_index: int) -> bool:
+	var n := graph_edit.get_node_or_null(NodePath("N_%d" % node_index))
+	if not (n is GraphNode):
+		return false
+	for c in graph_edit.get_children():
+		if c is GraphNode:
+			c.set_selected(false)
+	n.set_selected(true)
+	var target: Vector2 = n.position_offset - graph_edit.size * 0.5
+	graph_edit.set_scroll_offset(Vector2(maxf(0.0, target.x), maxf(0.0, target.y)))
+	_on_node_selected(n)
+	return true
+
+func _on_auto_layout() -> void:
+	DialogueAutoLayout.apply(graph, false)
+	_mark_dirty()
+	_rebuild()
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_WM_CLOSE_REQUEST:
+		if dirty:
+			_close_dialog.popup_centered()
+		else:
+			get_tree().quit()
