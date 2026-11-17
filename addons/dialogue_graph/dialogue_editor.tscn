@@ -1,0 +1,84 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://addons/dialogue_graph/dialogue_editor.gd" id="1_editor"]
+
+[node name="DialogueEditor" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_editor")
+
+[node name="VBox" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Toolbar" type="HBoxContainer" parent="VBox"]
+layout_mode = 2
+
+[node name="OpenButton" type="Button" parent="VBox/Toolbar"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "打开"
+
+[node name="SaveButton" type="Button" parent="VBox/Toolbar"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "保存"
+
+[node name="SaveAsButton" type="Button" parent="VBox/Toolbar"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "另存为"
+
+[node name="ValidateButton" type="Button" parent="VBox/Toolbar"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "校验"
+
+[node name="AutoLayoutButton" type="Button" parent="VBox/Toolbar"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "自动布局"
+
+[node name="SearchEdit" type="LineEdit" parent="VBox/Toolbar"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "跳转到 DialogueName"
+
+[node name="HSplit" type="HSplitContainer" parent="VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+split_offset = 820
+
+[node name="GraphEdit" type="GraphEdit" parent="VBox/HSplit"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="InspectorScroll" type="ScrollContainer" parent="VBox/HSplit"]
+layout_mode = 2
+custom_minimum_size = Vector2(320, 0)
+
+[node name="Inspector" type="VBoxContainer" parent="VBox/HSplit/InspectorScroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ErrorList" type="ItemList" parent="VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 120)
+layout_mode = 2
+
+[node name="Status" type="Label" parent="VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "就绪"
