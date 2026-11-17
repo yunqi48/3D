@@ -161,6 +161,7 @@ func _mark_dirty() -> void:
 
 func _clear_inspector() -> void:
 	for c in inspector.get_children():
+		inspector.remove_child(c)
 		c.queue_free()
 
 func _on_node_selected(node: Node) -> void:
@@ -188,11 +189,11 @@ func _on_popup_request(at_position: Vector2) -> void:
 	add_child(menu)
 	menu.add_item("新建对话节点", 0)
 	menu.position = DisplayServer.mouse_get_position()
+	menu.popup_hide.connect(menu.queue_free)
 	menu.popup()
 	menu.id_pressed.connect(func(id: int) -> void:
 		if id == 0:
-			_create_node_at(at_position)
-		menu.queue_free())
+			_create_node_at(at_position))
 
 func _create_node_at(local_pos: Vector2) -> void:
 	var graph_pos: Vector2 = (local_pos + graph_edit.scroll_offset) / graph_edit.zoom
