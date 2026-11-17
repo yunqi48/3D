@@ -10,3 +10,6 @@
 
 # 插件源码解压目录（已安装到 addons/，这里是重复源，不入库）
 /JSON-Editor-Plugin-for-Godot-4.x-master/
+
+# SDL 陀螺仪插件压缩包（已解压到 addons/godot-sdl-gyro/，源压缩包不入库）
+/addons/godot-sdl-gyro-addon.zip
