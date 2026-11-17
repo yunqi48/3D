@@ -52,6 +52,19 @@ func ending_of(i: int) -> Dictionary:
 	var e = nodes[i].get("ending", {})
 	return e if e is Dictionary else {}
 
+## 设为结局：结局节点不能有出口，也不能有选项（模板规则）。
+func set_ending(i: int, ending: Dictionary) -> void:
+	if i < 0 or i >= nodes.size():
+		return
+	nodes[i]["ending"] = ending.duplicate(true)
+	nodes[i]["links"] = null
+	nodes[i].erase("choices")
+
+func clear_ending(i: int) -> void:
+	if i < 0 or i >= nodes.size():
+		return
+	nodes[i].erase("ending")
+
 ## 出边列表：[{kind:"link"/"choice", choice_index:int, target:String}]
 func edges_of(i: int) -> Array:
 	var out: Array = []

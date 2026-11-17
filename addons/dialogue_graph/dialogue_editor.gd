@@ -649,14 +649,64 @@ func _build_inspector(n: DialogueGraphNode) -> void:
 			_commit_edit("新增选项"))
 		inspector.add_child(add)
 
-	# 结局字段（仅当节点已有 ending 时显示）
+	# 结局区块：没有 ending 时提供创建入口；有 ending 时编辑 + 移除
 	var ending: Dictionary = graph.ending_of(i)
-	if not ending.is_empty():
+	var end_header := Label.new()
+	end_header.text = "— 结局 —"
+	inspector.add_child(end_header)
+	if ending.is_empty():
+		if graph.has_choices(i):
+			var end_hint := Label.new()
+			end_hint.text = "  分支节点不能设为结局（先删除所有选项）"
+			end_hint.add_theme_color_override("font_color", Color("9aa0a6"))
+			inspector.add_child(end_hint)
+		else:
+			var make_ending := Button.new()
+			make_ending.text = "＋ 设为结局"
+			make_ending.tooltip_text = "结局节点没有下一条；会断开当前连线"
+			make_ending.pressed.connect(func() -> void:
+				_begin_edit()
+				graph.set_ending(i, {
+					"id": _default_ending_id(i),
+					"title": "结局",
+					"subtitle": "",
+					"next_scene": "",
+				})
+				_rebuild_keep_selection()
+				_commit_edit("设为结局"))
+			inspector.add_child(make_ending)
+	else:
 		for key in ["id", "title", "subtitle", "next_scene"]:
 			_field("ending." + key, str(ending.get(key, "")), func(t: String) -> void:
 				_begin_edit()
 				ending[key] = t
 				_mark_dirty())
+		var remove_ending := Button.new()
+		remove_ending.text = "移除结局"
+		remove_ending.pressed.connect(func() -> void:
+			_begin_edit()
+			graph.clear_ending(i)
+			_rebuild_keep_selection()
+			_commit_edit("移除结局"))
+		inspector.add_child(remove_ending)
+
+# 结局 id 默认取节点名的蛇形形式，重复时自动加序号
+func _default_ending_id(i: int) -> String:
+	var base := graph.get_name_at(i).to_lower().replace(".", "_").replace(" ", "_")
+	if base.is_empty():
+		base = "ending"
+	var candidate := base
+	var suffix := 2
+	while _ending_id_exists(candidate):
+		candidate = "%s_%d" % [base, suffix]
+		suffix += 1
+	return candidate
+
+func _ending_id_exists(ending_id: String) -> bool:
+	for j in graph.nodes.size():
+		if str(graph.ending_of(j).get("id", "")) == ending_id:
+			return true
+	return false
 
 # ---------- 分支选项的 if 条件编辑 ----------
 

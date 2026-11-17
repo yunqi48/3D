@@ -62,6 +62,14 @@ func run(t) -> void:
 	t.expect(g.edges_of(0).size(), 1, "新增选项产生出边")
 	t.expect(g.edges_of(0)[0].target, "Bunker.002", "选项目标")
 
+	# 设为结局：links 置空、choices 移除；可再清除
+	g.set_ending(0, {"id": "e_test", "title": "结局"})
+	t.expect(g.nodes[0]["links"], null, "设为结局后 links 置空")
+	t.expect(g.ending_of(0).get("id"), "e_test", "结局可读")
+	t.expect(g.has_choices(0), false, "设为结局会移除选项")
+	g.clear_ending(0)
+	t.expect(g.ending_of(0).is_empty(), true, "移除结局")
+
 	# 布局读写
 	t.expect_true(is_nan(g.position_of(0).x), "无坐标时返回 NaN")
 	g.set_position(0, Vector2(120, 340))
