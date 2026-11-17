@@ -586,6 +586,9 @@ func _build_inspector(n: DialogueGraphNode) -> void:
 	inspector.add_child(preview)
 	refresh_preview.call()
 
+	# 节点级 set：进入本节点时修改状态
+	_build_set_editor(d, "进入本节点时改状态")
+
 	# 选项编辑器（仅分支节点）
 	if graph.has_choices(i):
 		var h := Label.new()
@@ -605,6 +608,8 @@ func _build_inspector(n: DialogueGraphNode) -> void:
 				n.refresh()
 				_mark_dirty())
 			_build_condition_editor(c)
+			# 选项级 set：点选后修改状态
+			_build_set_editor(c, "点选后改状态")
 			var del := Button.new()
 			del.text = "删除选项 %d" % (ci + 1)
 			del.pressed.connect(func() -> void:
@@ -791,6 +796,149 @@ func _default_cond_value(type: String):
 			return 0
 		_:
 			return ""
+
+# ---------- set（状态修改）编辑 ----------
+
+func _ensure_set(target: Dictionary) -> Array:
+	if not target.has("set") or not (target["set"] is Array):
+		target["set"] = []
+	return target["set"]
+
+func _build_set_editor(target: Dictionary, header_text: String) -> void:
+	var list: Array = []
+	if target.get("set") is Array:
+		list = target["set"]
+
+	var header := Label.new()
+	header.text = "  " + header_text
+	inspector.add_child(header)
+
+	if list.is_empty():
+		var hint := Label.new()
+		hint.text = "  （不改状态）"
+		hint.add_theme_color_override("font_color", Color("9aa0a6"))
+		inspector.add_child(hint)
+	for set_i in list.size():
+		_build_set_row(target, set_i)
+
+	var add := Button.new()
+	add.text = "＋ 状态"
+	add.pressed.connect(func() -> void:
+		_begin_edit()
+		_ensure_set(target).append(["flag", "new_flag", "set", true])
+		_rebuild_keep_selection()
+		_commit_edit("新增状态修改"))
+	inspector.add_child(add)
+
+func _build_set_row(target: Dictionary, set_i: int) -> void:
+	var list: Array = target["set"]
+	var item: Array = list[set_i]
+	var vtype := str(item[0]) if item.size() > 0 else "flag"
+	var vname := str(item[1]) if item.size() > 1 else ""
+	var vop := str(item[2]) if item.size() > 2 else "set"
+	var has_value := vop != "toggle"
+	var vval = item[3] if item.size() > 3 else _default_cond_value(vtype)
+
+	var row := HBoxContainer.new()
+	inspector.add_child(row)
+	var idx_label := Label.new()
+	idx_label.text = "%d." % (set_i + 1)
+	row.add_child(idx_label)
+
+	var types := ["flag", "num", "str"]
+	var type_opt := OptionButton.new()
+	for t in types:
+		type_opt.add_item(t)
+	type_opt.select(maxi(0, types.find(vtype)))
+	type_opt.tooltip_text = "变量类型"
+	row.add_child(type_opt)
+
+	var var_edit := LineEdit.new()
+	var_edit.text = vname
+	var_edit.custom_minimum_size = Vector2(80, 0)
+	var_edit.tooltip_text = "变量名（蛇形命名）"
+	row.add_child(var_edit)
+
+	var ops := ["set", "add", "toggle"]
+	var op_opt := OptionButton.new()
+	for o in ops:
+		op_opt.add_item(o)
+	op_opt.select(maxi(0, ops.find(vop)))
+	op_opt.tooltip_text = "set=赋值 / add=数字加 / toggle=flag 翻转"
+	row.add_child(op_opt)
+
+	var val_edit := LineEdit.new()
+	val_edit.text = _cond_value_text(vtype, vval)
+	val_edit.custom_minimum_size = Vector2(64, 0)
+	val_edit.editable = has_value
+	val_edit.placeholder_text = "" if has_value else "toggle 不需要值"
+	row.add_child(val_edit)
+
+	var del := Button.new()
+	del.text = "×"
+	del.tooltip_text = "删除这条状态修改"
+	row.add_child(del)
+
+	type_opt.item_selected.connect(func(idx: int) -> void:
+		_begin_edit()
+		while item.size() < 3:
+			item.append(null)
+		item[0] = types[idx]
+		if item.size() > 3:
+			item[3] = _default_cond_value(types[idx])
+		_rebuild_keep_selection()
+		_commit_edit("修改状态类型"))
+
+	op_opt.item_selected.connect(func(idx: int) -> void:
+		_begin_edit()
+		var new_op: String = ops[idx]
+		while item.size() < 3:
+			item.append(null)
+		item[2] = new_op
+		if new_op == "toggle":
+			item.resize(3)   # toggle 是 3 元素，不带值
+		else:
+			while item.size() < 4:
+				item.append(_default_cond_value(str(item[0])))
+		_rebuild_keep_selection()
+		_commit_edit("修改状态操作"))
+
+	var_edit.focus_entered.connect(_begin_edit)
+	var_edit.text_submitted.connect(func(t: String) -> void:
+		_begin_edit()
+		while item.size() < 3:
+			item.append(null)
+		item[1] = t.strip_edges()
+		_commit_edit("编辑状态变量"))
+	var_edit.focus_exited.connect(func() -> void:
+		_begin_edit()
+		while item.size() < 3:
+			item.append(null)
+		item[1] = var_edit.text.strip_edges()
+		_commit_edit("编辑状态变量"))
+
+	if has_value:
+		val_edit.focus_entered.connect(_begin_edit)
+		val_edit.text_submitted.connect(func(t: String) -> void:
+			_begin_edit()
+			while item.size() < 4:
+				item.append(null)
+			item[3] = _parse_cond_value(vtype, t)
+			_commit_edit("编辑状态值"))
+		val_edit.focus_exited.connect(func() -> void:
+			_begin_edit()
+			while item.size() < 4:
+				item.append(null)
+			item[3] = _parse_cond_value(vtype, val_edit.text)
+			_commit_edit("编辑状态值"))
+
+	del.pressed.connect(func() -> void:
+		_begin_edit()
+		list.remove_at(set_i)
+		if list.is_empty():
+			target.erase("set")
+		_rebuild_keep_selection()
+		_commit_edit("删除状态修改"))
 
 func _on_end_node_move() -> void:
 	for c in graph_edit.get_children():
