@@ -47,7 +47,7 @@ func _process(_delta: float) -> void:
 	# 手柄选中选项的那一帧跳过推进，避免把新台词立刻跳过
 	if _choice_just_selected:
 		_choice_just_selected = false
-	elif not _dialogue_over and Input.is_action_just_pressed('next_text'):
+	elif not _dialogue_over and InputManager.just_pressed(InputManager.ADVANCE):
 		_advance()
 
 # 空格/回车/手柄 A 键：打字中跳过，无选项时推进（有选项时由选项按钮接管）

@@ -81,16 +81,24 @@ func apply_effects(effects: Array) -> void:
 		match kind:
 			"flag":
 				if op == "set":
-					vars[var_name] = bool(value)
+					_set_var(var_name, bool(value))
 				elif op == "toggle":
-					vars[var_name] = not bool(vars.get(var_name, false))
+					_set_var(var_name, not bool(vars.get(var_name, false)))
 			"num":
 				if op == "set":
-					vars[var_name] = float(value)
+					_set_var(var_name, float(value))
 				elif op == "add":
-					vars[var_name] = float(vars.get(var_name, 0.0)) + float(value)
+					_set_var(var_name, float(vars.get(var_name, 0.0)) + float(value))
 			"str":
-				vars[var_name] = str(value)
+				_set_var(var_name, str(value))
+
+
+# 统一写入入口：所有变量改动都走这里，自动打印变动（供 Debug 全局监视）
+func _set_var(var_name: String, value) -> void:
+	var old = vars.get(var_name, null)
+	vars[var_name] = value
+	if old != value:
+		Debug.log_change(var_name, old, value, "GameState")
 
 
 # ===== 结局 =====
@@ -99,11 +107,11 @@ func apply_effects(effects: Array) -> void:
 func record_ending(ending_id: String) -> void:
 	if ending_id.is_empty():
 		return
-	var endings: Array = vars.get("endings", [])
+	var endings: Array = vars.get("endings", []).duplicate()
 	if not endings.has(ending_id):
 		endings.append(ending_id)
-	vars["endings"] = endings
-	vars["last_ending"] = ending_id
+	_set_var("endings", endings)
+	_set_var("last_ending", ending_id)
 	save()
 
 
@@ -117,3 +125,4 @@ func load_save() -> void:
 	var data = JsonHelper.read_json_file(SAVE_PATH)
 	if data is Dictionary:
 		vars = data
+		Debug.log_change("(vars)", "读档前", "已加载 %d 项" % data.size(), "GameState")
