@@ -60,10 +60,14 @@ func _output_rows() -> Array:
 			rows.append({"label": "选项%d：%s" % [ci + 1, _short(t, 12)], "color": CHOICE_COLOR, "port": true})
 		return rows
 	var target := graph.links_of(node_index)
-	if not target.is_empty():
-		return [{"label": "→ " + target, "color": DEF_COLOR, "port": true}]
+	# 结局节点是真正的终点；其余节点即使是新建/未连接，也保留「下一条」输出口，
+	# 否则新建节点只有输入口，没法继续连线。
 	var is_ending := not graph.ending_of(node_index).is_empty()
-	return [{"label": "■ 结局" if is_ending else "× 无出口", "color": DEAD_COLOR, "port": false}]
+	if is_ending:
+		return [{"label": "■ 结局", "color": DEAD_COLOR, "port": false}]
+	if target.is_empty():
+		return [{"label": "→ 未连接（拖线到这里）", "color": DEF_COLOR, "port": true}]
+	return [{"label": "→ " + target, "color": DEF_COLOR, "port": true}]
 
 func _preview(s: String, max_len := 48) -> String:
 	s = s.replace("\n", " ")
