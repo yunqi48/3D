@@ -18,6 +18,13 @@ var _close_dialog: ConfirmationDialog
 @onready var status: Label = %Status
 
 func _ready() -> void:
+	# 工具场景不需要 FPS 的指针捕获：InputManager 是 autoload，会在 _ready 里
+	# 把鼠标设成 CAPTURED，并在 _process 里每帧重新捕获。这里接管指针控制。
+	var input_manager := get_node_or_null("/root/InputManager")
+	if input_manager != null:
+		input_manager.set_process(false)
+	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+
 	get_tree().auto_accept_quit = false
 	graph_edit.minimap_enabled = MINIMAP
 	graph_edit.connection_request.connect(_on_connection_request)
