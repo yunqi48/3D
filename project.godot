@@ -30,7 +30,7 @@ window/stretch/aspect="expand"
 
 [editor_plugins]
 
-enabled=PackedStringArray("json_editor")
+enabled=PackedStringArray("json_editor", "dialogue_graph")
 
 [input]
 
