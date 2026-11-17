@@ -1,0 +1,17 @@
+[gd_scene format=3 uid="uid://bibdjxqjix4k1"]
+
+[ext_resource type="PackedScene" uid="uid://dd6q5m1pq460i" path="res://resources/Model/dice_frame.glb" id="1_7lvy1"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_yvrx8"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_yvrx8"]
+
+[node name="dice" type="RigidBody3D" unique_id=1286684697]
+mass = 10.0
+physics_material_override = SubResource("PhysicsMaterial_yvrx8")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1712058172]
+transform = Transform3D(2.005, 0, 0, 0, 2.005, 0, 0, 0, 2.005, 0, 0, 0)
+shape = SubResource("BoxShape3D_yvrx8")
+
+[node name="dice_frame" parent="." unique_id=1052041167 instance=ExtResource("1_7lvy1")]
