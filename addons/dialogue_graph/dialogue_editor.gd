@@ -15,6 +15,8 @@ var current_path := TEXT_PATH
 
 func _ready() -> void:
 	graph_edit.minimap_enabled = MINIMAP
+	graph_edit.connection_request.connect(_on_connection_request)
+	graph_edit.disconnection_request.connect(_on_disconnection_request)
 	load_file(current_path)
 
 func load_file(path: String) -> void:
@@ -71,3 +73,44 @@ func _refresh_status() -> void:
 		current_path,
 		"  *未保存" if dirty else ""
 	]
+
+func _on_connection_request(from_node: StringName, from_port: int, to_node: StringName, to_port: int) -> void:
+	if graph_edit.is_node_connected(from_node, from_port, to_node, to_port):
+		return
+	var src := _node_by_name(from_node)
+	var dst := _node_by_name(to_node)
+	if src == null or dst == null:
+		return
+	var target := graph.get_name_at(dst.node_index)
+	# 对话语义：一个输出口只能指向一个目标，先断掉同口的旧连线。
+	for c in graph_edit.get_connection_list():
+		if StringName(c.from_node) == from_node and int(c.from_port) == from_port:
+			graph_edit.disconnect_node(StringName(c.from_node), int(c.from_port),
+				StringName(c.to_node), int(c.to_port))
+	if graph.has_choices(src.node_index):
+		graph.set_choice_links(src.node_index, from_port, target)
+	else:
+		graph.set_links(src.node_index, target)
+	graph_edit.connect_node(from_node, from_port, to_node, to_port)
+	src.refresh()
+	_mark_dirty()
+
+func _on_disconnection_request(from_node: StringName, from_port: int, to_node: StringName, to_port: int) -> void:
+	var src := _node_by_name(from_node)
+	if src == null:
+		return
+	if graph.has_choices(src.node_index):
+		graph.set_choice_links(src.node_index, from_port, "")
+	else:
+		graph.set_links(src.node_index, "")
+	graph_edit.disconnect_node(from_node, from_port, to_node, to_port)
+	src.refresh()
+	_mark_dirty()
+
+func _node_by_name(n: StringName) -> DialogueGraphNode:
+	var c := graph_edit.get_node_or_null(NodePath(n))
+	return c as DialogueGraphNode
+
+func _mark_dirty() -> void:
+	dirty = true
+	_refresh_status()
