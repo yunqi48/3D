@@ -247,10 +247,18 @@ func _apply_snapshot(snapshot: String) -> void:
 	_rebuild()
 	_applying_snapshot = false
 	if not keep_name.is_empty():
-		var idx := graph.index_of(keep_name)
-		if idx >= 0:
-			_focus_node(idx)
+		_restore_selection(keep_name)
 	_refresh_undo_buttons()
+
+## 撤销/重做后恢复选中节点和 Inspector，但保持当前视图滚动位置不变。
+func _restore_selection(keep_name: String) -> void:
+	var idx := graph.index_of(keep_name)
+	if idx < 0:
+		return
+	var n := graph_edit.get_node_or_null(NodePath("N_%d" % idx))
+	if n is GraphNode:
+		n.set_selected(true)
+		_on_node_selected(n)
 
 func _on_undo() -> void:
 	_text_undo_timer.stop()
