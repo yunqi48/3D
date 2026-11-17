@@ -144,6 +144,15 @@ func _rebuild() -> void:
 	if is_instance_valid(status):
 		_refresh_status()
 
+## 重建图但保持当前选中节点的 Inspector（新增/删除选项、条件、重命名后用）。
+func _rebuild_keep_selection() -> void:
+	var keep := ""
+	if _selected_node_index >= 0 and _selected_node_index < graph.nodes.size():
+		keep = graph.get_name_at(_selected_node_index)
+	_rebuild()
+	if not keep.is_empty():
+		_restore_selection(keep)
+
 func _link_node(n: DialogueGraphNode, i: int) -> void:
 	for e in graph.edges_of(i):
 		var to := graph.index_of(e.target)
@@ -350,6 +359,7 @@ func _create_node_at(local_pos: Vector2) -> void:
 	_begin_edit()
 	graph.create_node(new_name, scene_name, graph_pos)
 	_rebuild()
+	_restore_selection(new_name)   # 建完立即选中，直接编辑/接线
 	_commit_edit("新建节点")
 
 func _rename_node(i: int, new_name: String) -> void:
@@ -361,7 +371,7 @@ func _rename_node(i: int, new_name: String) -> void:
 	_begin_edit()
 	graph.nodes[i]["DialogueName"] = new_name
 	graph.rebuild_index()
-	_rebuild()
+	_rebuild_keep_selection()
 	_commit_edit("重命名节点")
 
 # 通用单行字段：回车或失焦时写回
@@ -594,6 +604,7 @@ func _build_inspector(n: DialogueGraphNode) -> void:
 				c["links"] = null if t.strip_edges().is_empty() else t.strip_edges()
 				n.refresh()
 				_mark_dirty())
+			_build_condition_editor(c)
 			var del := Button.new()
 			del.text = "删除选项 %d" % (ci + 1)
 			del.pressed.connect(func() -> void:
@@ -601,7 +612,7 @@ func _build_inspector(n: DialogueGraphNode) -> void:
 				choices.remove_at(ci)
 				if choices.is_empty():
 					d.erase("choices")
-				_rebuild()
+				_rebuild_keep_selection()
 				_commit_edit("删除选项"))
 			inspector.add_child(del)
 		var add := Button.new()
@@ -609,7 +620,7 @@ func _build_inspector(n: DialogueGraphNode) -> void:
 		add.pressed.connect(func() -> void:
 			_begin_edit()
 			graph.ensure_choices(i).append({"text": "新选项", "links": null})
-			_rebuild()
+			_rebuild_keep_selection()
 			_commit_edit("新增选项"))
 		inspector.add_child(add)
 
@@ -621,6 +632,165 @@ func _build_inspector(n: DialogueGraphNode) -> void:
 				_begin_edit()
 				ending[key] = t
 				_mark_dirty())
+
+# ---------- 分支选项的 if 条件编辑 ----------
+
+func _ensure_conditions(c: Dictionary) -> Array:
+	if not c.has("if") or not (c["if"] is Array):
+		c["if"] = []
+	return c["if"]
+
+func _build_condition_editor(c: Dictionary) -> void:
+	var conds: Array = []
+	if c.get("if") is Array:
+		conds = c["if"]
+
+	var header := Label.new()
+	header.text = "  条件（全部满足才显示）"
+	inspector.add_child(header)
+
+	if conds.is_empty():
+		var hint := Label.new()
+		hint.text = "  （无条件：总是显示）"
+		hint.add_theme_color_override("font_color", Color("9aa0a6"))
+		inspector.add_child(hint)
+	for cond_i in conds.size():
+		_build_condition_row(c, cond_i)
+
+	var add := Button.new()
+	add.text = "＋ 条件"
+	add.pressed.connect(func() -> void:
+		_begin_edit()
+		_ensure_conditions(c).append(["flag", "new_flag", "==", true])
+		_rebuild_keep_selection()
+		_commit_edit("新增分支条件"))
+	inspector.add_child(add)
+
+func _build_condition_row(c: Dictionary, cond_i: int) -> void:
+	var conds: Array = c["if"]
+	var cond: Array = conds[cond_i]
+	var vtype := str(cond[0]) if cond.size() > 0 else "flag"
+	var vname := str(cond[1]) if cond.size() > 1 else ""
+	var vop := str(cond[2]) if cond.size() > 2 else "=="
+	var vval = cond[3] if cond.size() > 3 else true
+
+	var row := HBoxContainer.new()
+	inspector.add_child(row)
+	var idx_label := Label.new()
+	idx_label.text = "%d." % (cond_i + 1)
+	row.add_child(idx_label)
+
+	var types := ["flag", "num", "str"]
+	var type_opt := OptionButton.new()
+	for t in types:
+		type_opt.add_item(t)
+	type_opt.select(maxi(0, types.find(vtype)))
+	type_opt.tooltip_text = "变量类型"
+	row.add_child(type_opt)
+
+	var var_edit := LineEdit.new()
+	var_edit.text = vname
+	var_edit.custom_minimum_size = Vector2(80, 0)
+	var_edit.tooltip_text = "变量名（蛇形命名，如 has_chip）"
+	row.add_child(var_edit)
+
+	var ops := ["==", "!=", ">", "<", ">=", "<="]
+	var op_opt := OptionButton.new()
+	for o in ops:
+		op_opt.add_item(o)
+	op_opt.select(maxi(0, ops.find(vop)))
+	op_opt.tooltip_text = "运算符"
+	row.add_child(op_opt)
+
+	var val_edit := LineEdit.new()
+	val_edit.text = _cond_value_text(vtype, vval)
+	val_edit.custom_minimum_size = Vector2(64, 0)
+	val_edit.tooltip_text = "比较值（flag 填 true/false）"
+	row.add_child(val_edit)
+
+	var del := Button.new()
+	del.text = "×"
+	del.tooltip_text = "删除这条条件"
+	row.add_child(del)
+
+	type_opt.item_selected.connect(func(idx: int) -> void:
+		_begin_edit()
+		while cond.size() < 4:
+			cond.append(null)
+		cond[0] = types[idx]
+		cond[3] = _default_cond_value(types[idx])
+		_rebuild_keep_selection()
+		_commit_edit("修改条件类型"))
+	op_opt.item_selected.connect(func(idx: int) -> void:
+		_begin_edit()
+		while cond.size() < 4:
+			cond.append(null)
+		cond[2] = ops[idx]
+		_commit_edit("修改条件运算符"))
+
+	var_edit.focus_entered.connect(_begin_edit)
+	var_edit.text_submitted.connect(func(t: String) -> void:
+		_begin_edit()
+		_write_cond_var(cond, t)
+		_commit_edit("编辑条件变量"))
+	var_edit.focus_exited.connect(func() -> void:
+		_begin_edit()
+		_write_cond_var(cond, var_edit.text)
+		_commit_edit("编辑条件变量"))
+
+	val_edit.focus_entered.connect(_begin_edit)
+	val_edit.text_submitted.connect(func(t: String) -> void:
+		_begin_edit()
+		_write_cond_value(cond, vtype, t)
+		_commit_edit("编辑条件值"))
+	val_edit.focus_exited.connect(func() -> void:
+		_begin_edit()
+		_write_cond_value(cond, vtype, val_edit.text)
+		_commit_edit("编辑条件值"))
+
+	del.pressed.connect(func() -> void:
+		_begin_edit()
+		conds.remove_at(cond_i)
+		if conds.is_empty():
+			c.erase("if")
+		_rebuild_keep_selection()
+		_commit_edit("删除分支条件"))
+
+func _write_cond_var(cond: Array, value: String) -> void:
+	while cond.size() < 4:
+		cond.append(null)
+	cond[1] = value.strip_edges()
+
+func _write_cond_value(cond: Array, type: String, text: String) -> void:
+	while cond.size() < 4:
+		cond.append(null)
+	cond[3] = _parse_cond_value(type, text)
+
+func _parse_cond_value(type: String, text: String):
+	var t := text.strip_edges()
+	match type:
+		"flag":
+			return t.to_lower() == "true"
+		"num":
+			if t.is_valid_int():
+				return int(t)
+			return t.to_float()
+		_:
+			return text
+
+func _cond_value_text(type: String, value) -> String:
+	if type == "flag":
+		return "true" if bool(value) else "false"
+	return str(value)
+
+func _default_cond_value(type: String):
+	match type:
+		"flag":
+			return true
+		"num":
+			return 0
+		_:
+			return ""
 
 func _on_end_node_move() -> void:
 	for c in graph_edit.get_children():
