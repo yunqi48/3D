@@ -589,6 +589,26 @@ func _build_inspector(n: DialogueGraphNode) -> void:
 	# 节点级 set：进入本节点时修改状态
 	_build_set_editor(d, "进入本节点时改状态")
 
+	# 普通文本节点：提供「转为分支」入口；结局节点不允许有选项
+	if not graph.has_choices(i):
+		if not graph.ending_of(i).is_empty():
+			var eh := Label.new()
+			eh.text = "  （结局节点不能添加选项）"
+			eh.add_theme_color_override("font_color", Color("9aa0a6"))
+			inspector.add_child(eh)
+		else:
+			var to_branch := Button.new()
+			to_branch.text = "＋ 添加选项（转为分支）"
+			to_branch.tooltip_text = "把线性节点变成分支节点；原来的下一条会放进第一个选项"
+			to_branch.pressed.connect(func() -> void:
+				_begin_edit()
+				var old_target := graph.links_of(i)
+				var arr := graph.ensure_choices(i)
+				arr.append({"text": "新选项", "links": null if old_target.is_empty() else old_target})
+				_rebuild_keep_selection()
+				_commit_edit("添加选项（转为分支）"))
+			inspector.add_child(to_branch)
+
 	# 选项编辑器（仅分支节点）
 	if graph.has_choices(i):
 		var h := Label.new()

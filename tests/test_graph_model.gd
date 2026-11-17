@@ -53,6 +53,15 @@ func run(t) -> void:
 	g.set_links(0, "Bunker.003")
 	t.expect(g.nodes[0]["_comment"], "保留我", "patch 后未知键仍在")
 
+	# 线性节点转为分支：创建 choices 且 links 必须置空
+	g.set_links(0, "Bunker.002")
+	var arr := g.ensure_choices(0)
+	t.expect(arr.size(), 0, "转为分支后 choices 初始为空")
+	t.expect(g.nodes[0]["links"], null, "转为分支后 links 置空")
+	arr.append({"text": "继续", "links": "Bunker.002"})
+	t.expect(g.edges_of(0).size(), 1, "新增选项产生出边")
+	t.expect(g.edges_of(0)[0].target, "Bunker.002", "选项目标")
+
 	# 布局读写
 	t.expect_true(is_nan(g.position_of(0).x), "无坐标时返回 NaN")
 	g.set_position(0, Vector2(120, 340))

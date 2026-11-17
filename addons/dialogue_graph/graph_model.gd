@@ -123,7 +123,8 @@ func ensure_choices(i: int) -> Array:
 		return []
 	if not nodes[i].has("choices") or not (nodes[i]["choices"] is Array):
 		nodes[i]["choices"] = []
-		nodes[i]["links"] = null
+	# 模板规则：有 choices 的节点 links 必须是 null，否则空格推进会把选项跳过
+	nodes[i]["links"] = null
 	return nodes[i]["choices"]
 
 func to_array() -> Array:
