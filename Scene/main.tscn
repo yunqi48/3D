@@ -1,10 +1,9 @@
 [gd_scene format=3 uid="uid://codcs2gsurck2"]
 
+[ext_resource type="PackedScene" uid="uid://bvgvswf7bv826" path="res://Scene/control.tscn" id="1_3amdw"]
 [ext_resource type="PackedScene" uid="uid://b1ui5menrwat5" path="res://Scene/mainpanle.tscn" id="1_ig7tw"]
-[ext_resource type="Script" uid="uid://bx4nmkw7tw8fr" path="res://Sctipt/shoub.gd" id="2_0xm2m"]
-[ext_resource type="Script" uid="uid://dqei86tvxuew" path="res://Sctipt/player_camera.gd" id="3_player"]
 
-[sub_resource type="BoxMesh" id="BoxMesh_iitrw"]
+[sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_2wwxx"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7dm0k"]
 albedo_color = Color(0, 0.94509804, 0.44705883, 1)
@@ -13,22 +12,23 @@ albedo_color = Color(0, 0.94509804, 0.44705883, 1)
 
 [node name="main" type="Node3D" unique_id=1162543842]
 
-[node name="Camera3D" type="Camera3D" parent="." unique_id=1542770355]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7, 5)
-script = ExtResource("3_player")
+[node name="Control" parent="." unique_id=386784777 instance=ExtResource("1_3amdw")]
+visible = false
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1207513344]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 4.1741376, 0)
 
-[node name="Cube" type="MeshInstance3D" parent="." unique_id=2026152933]
-mesh = SubResource("BoxMesh_iitrw")
+[node name="Mainpanle" parent="." unique_id=1700195604 instance=ExtResource("1_ig7tw")]
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=612975772]
-transform = Transform3D(10, 0, 0, 0, 1, 0, 0, 0, 10, 0, 0, 0)
+[node name="RigidBody3D" type="StaticBody3D" parent="." unique_id=96827456]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="RigidBody3D" unique_id=626684673]
+shape = SubResource("WorldBoundaryShape3D_2wwxx")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="RigidBody3D" unique_id=612975772]
+transform = Transform3D(10, 0, 0, 0, 10, 0, 0, 0, 10, 0, 0, 0)
 material_override = SubResource("StandardMaterial3D_7dm0k")
 mesh = SubResource("PlaneMesh_iitrw")
 
-[node name="Mainpanle" parent="." unique_id=1700195604 instance=ExtResource("1_ig7tw")]
-
-[node name="Node3D" type="Node3D" parent="." unique_id=257335578]
-script = ExtResource("2_0xm2m")
+[node name="Camera3D" type="Camera3D" parent="." unique_id=1549740506]
+transform = Transform3D(1, 0, 0, 0, 0.8518295, 0.52381915, 0, -0.52381915, 0.8518295, 0, 3.1843023, 6.4480276)
