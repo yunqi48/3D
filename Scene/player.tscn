@@ -1,0 +1,36 @@
+[gd_scene format=3 uid="uid://crx5utwve04vk"]
+
+[ext_resource type="Script" uid="uid://cdpo8mam4ajwa" path="res://Sctipt/Player.gd" id="1_y8w33"]
+[ext_resource type="Script" uid="uid://pxtx2p81p6lm" path="res://Sctipt/ThirdPersonCamera.gd" id="2_xa75v"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_k56px"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_wp5od"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_wp5od"]
+
+[node name="Player" type="CharacterBody3D" unique_id=471225796]
+collision_layer = 2
+script = ExtResource("1_y8w33")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=548863044]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("CapsuleShape3D_k56px")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1352599380]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+mesh = SubResource("CapsuleMesh_wp5od")
+
+[node name="SpringArm3D" type="SpringArm3D" parent="." unique_id=2029747115]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.55, 1.9, 0)
+spring_length = 3.6
+margin = 0.25
+script = ExtResource("2_xa75v")
+aim_height = 4.0
+
+[node name="Camera3D" type="Camera3D" parent="SpringArm3D" unique_id=473608874]
+current = true
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="." unique_id=2065480855]
+transform = Transform3D(0.46885478, 0, 0, 0, 0.43198568, 0, 0, 0, 0.508626, 0, 1.4155884, 0.51398957)
+mesh = SubResource("BoxMesh_wp5od")
