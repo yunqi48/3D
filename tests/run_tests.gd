@@ -4,6 +4,7 @@ const TESTS := [
 	"res://tests/test_graph_model.gd",
 	"res://tests/test_validator.gd",
 	"res://tests/test_auto_layout.gd",
+	"res://tests/test_json_io.gd",
 ]
 
 var _checks := 0
