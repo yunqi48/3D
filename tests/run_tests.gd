@@ -12,7 +12,7 @@ var _failures := 0
 func _initialize() -> void:
 	for path in TESTS:
 		var script: GDScript = load(path)
-		if script == null:
+		if script == null or not script.can_instantiate():
 			printerr("无法加载测试: ", path)
 			_failures += 1
 			continue
