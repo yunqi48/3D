@@ -326,12 +326,14 @@ func _on_popup_request(at_position: Vector2) -> void:
 	var menu := PopupMenu.new()
 	add_child(menu)
 	menu.add_item("新建对话节点", 0)
-	menu.position = DisplayServer.mouse_get_position()
 	menu.popup_hide.connect(menu.queue_free)
-	menu.popup()
 	menu.id_pressed.connect(func(id: int) -> void:
 		if id == 0:
 			_create_node_at(at_position))
+	# 用 Popup 自带的父窗口定位：嵌入子窗口 / 屏幕缩放下也能贴住鼠标。
+	# 之前用 DisplayServer.mouse_get_position() 是屏幕物理坐标，和嵌入窗口的
+	# 逻辑坐标不是同一套，菜单会出现在偏离鼠标的位置。
+	menu.popup_on_parent(Rect2i(Vector2i(get_viewport().get_mouse_position()), Vector2i.ZERO))
 
 func _create_node_at(local_pos: Vector2) -> void:
 	var graph_pos: Vector2 = (local_pos + graph_edit.scroll_offset) / graph_edit.zoom
