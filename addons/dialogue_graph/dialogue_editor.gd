@@ -228,7 +228,9 @@ func _commit_edit(action_name: String) -> void:
 	# Godot 4.7：add_do_method / add_undo_method 只接受一个 Callable
 	undo_redo.add_do_method(_apply_snapshot.bind(after))
 	undo_redo.add_undo_method(_apply_snapshot.bind(before))
-	undo_redo.commit_action()
+	# 界面/模型已经在编辑时更新过，这里不能再执行 do 方法，
+	# 否则每次提交历史都会重建整图并把视图拉回选中节点（拖动节点后视角跳走）。
+	undo_redo.commit_action(false)
 	_mark_dirty()
 	_refresh_undo_buttons()
 
